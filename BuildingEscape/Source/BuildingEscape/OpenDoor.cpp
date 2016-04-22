@@ -11,8 +11,8 @@ UOpenDoor::UOpenDoor()
 	// off to improve performance if you don't need them.
 	bWantsBeginPlay = true;
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	IsOpening = false;
+	IsClosed = true;
 }
 
 
@@ -29,21 +29,38 @@ void UOpenDoor::OpenDoor()
 	// find the owning actor
 	AActor *Owner = GetOwner();
 	// create a rotation
-	FRotator NewRotation = FRotator(0.0f, OpenAngle, 0.0f);
-	// set the door rotation
-	Owner->SetActorRotation(NewRotation);
-
+	FRotator CurrentRotation = Owner->GetActorRotation();
+	// currently assuming negative final yaw
+	float CurrentYaw = CurrentRotation.Yaw;
+	if (IsOpening && CurrentYaw <= OpenAngle) {
+		float NewYaw = CurrentYaw - AngleDelta;
+		NewYaw = NewYaw < OpenAngle ? OpenAngle : NewYaw;
+		FRotator NewRotation = FRotator(0.0f, NewYaw, 0.0f);
+		// set the door rotation
+		Owner->SetActorRotation(NewRotation);
+	}
+	else {
+		IsOpening = false;
+	}
 }
 
 void UOpenDoor::CloseDoor()
 {
 	// find the owning actor
 	AActor *Owner = GetOwner();
-	// create a rotation
-	FRotator NewRotation = FRotator(0.0f, 0.0f, 0.0f);
-	// set the door rotation
-	Owner->SetActorRotation(NewRotation);
-
+	FRotator CurrentRotation = Owner->GetActorRotation();
+	// currently assuming negative final yaw
+	float CurrentYaw = CurrentRotation.Yaw;
+	if (!IsOpening && !IsClosed && CurrentYaw >= ClosedAngle) {
+		float NewYaw = CurrentYaw + AngleDelta;
+		NewYaw = NewYaw > ClosedAngle ? ClosedAngle : NewYaw;
+		FRotator NewRotation = FRotator(0.0f, NewYaw, 0.0f);
+		// set the door rotation
+		Owner->SetActorRotation(NewRotation);
+	}
+	else {
+		IsClosed = true;
+	}
 }
 
 
@@ -51,14 +68,24 @@ void UOpenDoor::CloseDoor()
 void UOpenDoor::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
-
 	// Poll the trigger volume every frame
 	// if the opening actor is in the volume, open the door
 	if (PressurePlate->IsOverlappingActor(OpeningActor))
 	{
-		OpenDoor();
+		UE_LOG(LogTemp, Warning, TEXT("opening: %d closed: %d"), IsOpening, IsClosed);
+		IsOpening = true;
+		IsClosed = false;
 	}
 	else
+	{
+		IsOpening = false;
+	}
+
+	if (IsOpening)
+	{
+		OpenDoor();
+	}
+	else if (!IsClosed)
 	{
 		CloseDoor();
 	}
