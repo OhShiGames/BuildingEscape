@@ -3,6 +3,7 @@
 #include "BuildingEscape.h"
 #include "Grabber.h"
 
+#define OUT
 
 // Sets default values for this component's properties
 UGrabber::UGrabber()
@@ -31,6 +32,23 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
-	// ...
+	/// Get the player view point
+	FVector PlayerVPLocation;
+	FRotator PlayerVPRotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerVPLocation, OUT PlayerVPRotation);
+
+	FVector LineTraceEnd = PlayerVPLocation + (PlayerVPRotation.Vector() * Reach);
+	DrawDebugLine(GetWorld(), PlayerVPLocation, LineTraceEnd, FColor(200, 0, 0), false, 0.f, 0, 10.f);
+	/// Raycast to reach distance
+	FHitResult HitResult;
+	auto collided = GetWorld()->LineTraceSingleByObjectType(
+		OUT HitResult, PlayerVPLocation, LineTraceEnd,
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
+		FCollisionQueryParams(FName(TEXT("")), false, GetOwner())
+		);
+	/// see what we hit
+	if (collided) {
+		UE_LOG(LogTemp, Warning, TEXT("Collison: %s"), *HitResult.GetActor()->GetName());
+	}
 }
 
