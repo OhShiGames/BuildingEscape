@@ -57,21 +57,39 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
 	/// if the physics handle is attached
+	if (PhysicsHandle && PhysicsHandle->GrabbedComponent) {
 		/// move the object we're holding
+		FVector PlayerVPLocation;
+		FRotator PlayerVPRotation;
+		GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerVPLocation, OUT PlayerVPRotation);
+
+		FVector LineTraceEnd = PlayerVPLocation + (PlayerVPRotation.Vector() * Reach);
+		PhysicsHandle->SetTargetLocation(LineTraceEnd);
+	}
 }
 
 void UGrabber::Grab()
 {
 	/// LINE TRACE: Try and reach any actors with physics body collision channel set
-
+	auto HitResult = this->GetFirstPhysicsBodyInReach();
+	auto ComponentToGrab = HitResult.GetComponent();
+	auto ActorHit = HitResult.GetActor();
 	/// if we hit something, attach a physics handle
-	// todo attach physics handle
-	this->GetFirstPhysicsBodyInReach();
+	if (ActorHit) {
+		PhysicsHandle->GrabComponent(
+			ComponentToGrab,
+			NAME_None,
+			ActorHit->GetActorLocation(),
+			true
+		);
+	}
 }
 
 void UGrabber::Release()
 {
-	// todo release physics handle
+	if (PhysicsHandle && PhysicsHandle->GrabbedComponent) {
+		PhysicsHandle->ReleaseComponent();
+	}
 }
 
 const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
