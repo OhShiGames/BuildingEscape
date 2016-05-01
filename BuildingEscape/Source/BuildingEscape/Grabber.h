@@ -31,6 +31,10 @@ private:
 	void Release();
 	// Return hit for first physics body in reach
 	const FHitResult GetFirstPhysicsBodyInReach();
+	// Get the FVector start point of the current location of the player
+	const FVector GetReachLineStart();
+	// Calculate the FVector end point that a raycast would reach, based on the current location of the player
+	const FVector GetReachLineEnd();
 
 	// how far the player can reach out
 	float Reach = 100.f;
