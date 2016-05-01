@@ -33,8 +33,13 @@ private:
 	float TimeOpened;
 
 	UPROPERTY(EditAnywhere)
+	float RequiredMass = 10.f;
+
+	UPROPERTY(EditAnywhere)
 	ATriggerVolume *PressurePlate;
 
 	AActor *Owner;
-	AActor *OpeningActor; // Pawn inherits from Actor
+
+	// Return total KG on triggerplate
+	const float GetTotalMassOnPlate();
 };
