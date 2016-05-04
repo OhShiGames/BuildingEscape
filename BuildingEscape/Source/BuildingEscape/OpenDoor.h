@@ -36,9 +36,9 @@ private:
 	float RequiredMass = 10.f;
 
 	UPROPERTY(EditAnywhere)
-	ATriggerVolume *PressurePlate;
+	ATriggerVolume *PressurePlate = nullptr;
 
-	AActor *Owner;
+	AActor *Owner = nullptr;
 
 	// Return total KG on triggerplate
 	const float GetTotalMassOnPlate();

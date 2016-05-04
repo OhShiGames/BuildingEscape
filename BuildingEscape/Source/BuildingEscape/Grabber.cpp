@@ -50,7 +50,7 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
 	/// if the physics handle is attached
-	if (PhysicsHandle->GrabbedComponent) {
+	if (PhysicsHandle && PhysicsHandle->GrabbedComponent) {
 		/// move the object we're holding
 		PhysicsHandle->SetTargetLocation(GetReachLineEnd());
 	}
