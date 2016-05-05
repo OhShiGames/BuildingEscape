@@ -28,12 +28,14 @@ void UOpenDoor::BeginPlay()
 
 void UOpenDoor::OpenDoor()
 {
-	this->Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
+	//this->Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
+	OnOpenDoorRequest.Broadcast();
 }
 
 void UOpenDoor::CloseDoor()
 {
-	this->Owner->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
+	//this->Owner->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
+	OnCloseDoorRequest.Broadcast();
 }
 
 
