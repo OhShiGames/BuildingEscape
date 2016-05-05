@@ -19,9 +19,6 @@ public:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	void OpenDoor();
-	void CloseDoor();
-
 	// Called every frame
 	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
 
@@ -32,13 +29,6 @@ public:
 	FOnCloseDoorRequest OnCloseDoorRequest;
 
 private:
-	UPROPERTY(EditAnywhere)
-	float OpenAngle = -90.0f;
-
-	UPROPERTY(EditAnywhere)
-	float DoorCloseDelay = 0.0f;
-	float TimeOpened;
-
 	UPROPERTY(EditAnywhere)
 	float RequiredMass = 10.f;
 

@@ -16,7 +16,6 @@ UOpenDoor::UOpenDoor()
 	this->Owner = GetOwner();
 }
 
-
 // Called when the game starts
 void UOpenDoor::BeginPlay()
 {
@@ -26,33 +25,18 @@ void UOpenDoor::BeginPlay()
 	}
 }
 
-void UOpenDoor::OpenDoor()
-{
-	//this->Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
-	OnOpenDoorRequest.Broadcast();
-}
-
-void UOpenDoor::CloseDoor()
-{
-	//this->Owner->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
-	OnCloseDoorRequest.Broadcast();
-}
-
-
 // Called every frame
 void UOpenDoor::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
-	auto CurrentTime = GetWorld()->GetTimeSeconds();
 	// Poll the trigger volume every frame
 	if (GetTotalMassOnPlate() >= RequiredMass)
 	{
-		OpenDoor();
-		TimeOpened = CurrentTime;
+		OnOpenDoorRequest.Broadcast();
 	}
-	else if (CurrentTime - TimeOpened > DoorCloseDelay)
+	else
 	{
-		CloseDoor();
+		OnCloseDoorRequest.Broadcast();
 	}
 }
 
