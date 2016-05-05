@@ -32,11 +32,11 @@ void UOpenDoor::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompo
 	// Poll the trigger volume every frame
 	if (GetTotalMassOnPlate() >= RequiredMass)
 	{
-		OnOpenDoorRequest.Broadcast();
+		OnOpen.Broadcast();
 	}
 	else
 	{
-		OnCloseDoorRequest.Broadcast();
+		OnClose.Broadcast();
 	}
 }
 
